@@ -13,6 +13,14 @@ import './assets/css/global.css'
 import axios from 'axios'
 // 设置axios 的根路径
 axios.defaults.baseURL = 'http://localhost:8090/mtms/'
+// 配置axios请求拦截器，为每次请求添加请求头，设置token
+axios.interceptors.request.use(config => {
+  console.log('config', config)
+
+  config.headers.Authorization = window.sessionStorage.getItem('access_token')
+  // 在最后必须return config
+  return config
+})
 // 把axios 挂载到 Vue原型中
 Vue.prototype.$http = axios
 
