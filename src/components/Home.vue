@@ -11,7 +11,7 @@
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 左侧菜单区域 -->
-      <el-aside :width="isCollapse?'64px':'200px'">
+      <el-aside :width="isCollapse ? '64px' : '200px'">
         <div v-show="!isCollapse" @click="toggleCollapse" class="toggle-button">
           <i class="iconfont icon-shouqi"></i>
         </div>
@@ -19,7 +19,6 @@
           <i class="iconfont icon-zhankai"></i>
         </div>
         <el-menu
-          default-active="2"
           class="el-menu-vertical-demo"
           background-color="#333744"
           text-color="#fff"
@@ -27,7 +26,8 @@
           unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
-          router
+          @select="handleSelect"
+          :default-active="this.$route.path"
         >
           <!--一级菜单-->
           <el-submenu v-for="item in menuList" :key="item.id" :index="item.id">
@@ -42,7 +42,7 @@
             <el-menu-item
               v-for="subItem in item.children"
               :key="subItem.id"
-              :index="subItem.id"
+              :index="subItem.path"
             >
               <!--  二级菜单模板区 -->
               <template slot="title">
@@ -57,7 +57,7 @@
       </el-aside>
       <!-- 右侧内容主题 -->
       <el-main>
-          <router-view></router-view>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -76,6 +76,21 @@ export default {
     this.menuList = this.getMenuList()
   },
   methods: {
+    handleSelect (index, indexPath) {
+      console.log(index, indexPath)
+      // this.$router.push(index);
+      this.handleUrl(index)
+    },
+    handleUrl (url) {
+      // window.location.href=url;
+      const rm = this.$router.resolve(url)
+      const matched = rm.resolved.matched // 如果在路由中有配置，那么这个数组大于0，否则为0
+      if (matched.length > 0) {
+        this.$router.push(url)
+      } else {
+        window.open(url, '_blank')
+      }
+    },
     logout () {
       sessionStorage.clear()
       this.$router.push('/login')
@@ -98,13 +113,13 @@ export default {
             {
               id: '100101',
               title: '用户管理',
-              path: 'www.baidu.com',
+              path: '/users',
               icon: 'el-icon-s-data'
             },
             {
               id: '100102',
               title: '角色管理',
-              path: 'www.baidu.com',
+              path: 'https://www.baidu.com',
               icon: 'el-icon-s-custom'
             },
             {
@@ -124,21 +139,21 @@ export default {
             {
               id: '100201',
               title: '配送管理',
-              path: 'www.baidu.com',
+              path: 'http://www.baidu.com',
               icon: 'el-icon-menu'
             }
           ]
         },
         {
           id: '1003',
-          title: '消息管理',
+          title: '外部连接',
           path: '',
           icon: 'iconfont icon-sound-filling-fill',
           children: [
             {
               id: '100301',
               title: '发布消息',
-              path: 'www.baidu.com',
+              path: 'http://www.baidu.com',
               icon: 'el-icon-thumb'
             }
           ]
